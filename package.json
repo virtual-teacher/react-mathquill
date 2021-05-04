@@ -1,0 +1,36 @@
+{
+  "name": "react-mathquill",
+  "version": "1.0.0",
+  "description": "",
+  "private": "true",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "webpack serve"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/virtual-teacher/react-mathquill.git"
+  },
+  "bugs": {
+    "url": "https://github.com/virtual-teacher/react-mathquill/issues"
+  },
+  "homepage": "https://github.com/virtual-teacher/react-mathquill#readme",
+  "dependencies": {
+    "@matejmazur/react-katex": "^3.1.3",
+    "jquery": "^1.12.4",
+    "katex": "^0.13.5",
+    "mathquill": "git+https://git@github.com/Khan/mathquill.git#a9ae54e057c5c1acc8244a5627acbff29901d992",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.4",
+    "@types/react-dom": "^17.0.3",
+    "html-webpack-plugin": "^5.3.1",
+    "ts-loader": "^9.1.1",
+    "typescript": "^4.2.4",
+    "webpack": "^5.36.2",
+    "webpack-cli": "^4.6.0",
+    "webpack-dev-server": "^3.11.2"
+  }
+}

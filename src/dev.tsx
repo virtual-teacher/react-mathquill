@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import { ReactMathQuill } from "./index";
+import "./mathquill.css";
 
 const DevContainer = () => {
   const [value, setValue] = useState("");

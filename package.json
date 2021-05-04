@@ -5,6 +5,7 @@
   "private": "true",
   "main": "lib/esm/index.js",
   "module": "lib/esm/index.js",
+  "types": "lib/esm/index.d.ts",
   "scripts": {
     "build": "tsc",
     "dev": "webpack serve"

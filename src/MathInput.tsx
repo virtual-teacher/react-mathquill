@@ -190,7 +190,10 @@ class MathInput extends React.Component<MathInputProps, MathInputState> {
     // seeing that node for the first time, then returns the associated
     // MathQuill object for that node. It is stable - will always return
     // the same object when called on the same DOM node.
-    return MQ.MathField(ReactDOM.findDOMNode(this.mathinputRef.current), options); // eslint-disable-line
+    return MQ.MathField(
+      ReactDOM.findDOMNode(this.mathinputRef.current),
+      options
+    ); // eslint-disable-line
   };
 
   shouldShowButtons = (): boolean => {
@@ -220,7 +223,7 @@ class MathInput extends React.Component<MathInputProps, MathInputState> {
   };
 
   render(): React.ReactNode {
-    const className = "perseus-math-input mq-editable-field mq-math-mode";
+    const className = "mq-editable-field mq-math-mode";
     const { buttonSets } = this.props;
 
     let buttons = null;
@@ -230,8 +233,8 @@ class MathInput extends React.Component<MathInputProps, MathInputState> {
     }
 
     return (
-      <div style={{ display: "inline-block" }}>
-        <div style={{ display: "inline-block" }}>
+      <div style={{ display: "inline-block", width: "100%" }}>
+        <div style={{ display: "inline-block", width: "100%" }}>
           <span
             ref={this.mathinputRef}
             className={className}

@@ -10,7 +10,9 @@
     "dev": "webpack serve"
   },
   "files": [
-    "/lib"
+    "/lib",
+    "/src/fonts",
+    "/src/mathquill.css"
   ],
   "repository": {
     "type": "git",

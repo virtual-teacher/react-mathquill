@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import ReactDOM, { render } from "react-dom";
-import MathInput from "./MathInput";
+import ReactDOM from "react-dom";
+import { ReactMathQuill } from "./index";
 
 const DevContainer = () => {
   const [value, setValue] = useState("");
 
   return (
-    <MathInput
+    <ReactMathQuill
       value={value}
       onChange={setValue}
       buttonSets={[]}

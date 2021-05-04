@@ -2,7 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  entry: './src/dev.ts',
+  entry: './src/dev.tsx',
   mode: 'development',
   module: {
     rules: [
@@ -10,6 +10,14 @@ module.exports = {
         test: /\.tsx?$/,
         use: 'ts-loader',
         exclude: /node_modules/,
+      },
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
+      },
+      {
+        test: /\.(png|jpe?g|gif|svg|eot|otf|ttf|woff|woff2)$/i,
+        type: "asset",
       },
     ],
   },

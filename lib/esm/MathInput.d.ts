@@ -16,6 +16,7 @@ declare type MathInputProps = {
     buttonSets: string[];
     onFocus: () => void;
     onBlur: () => void;
+    onInit?: (input: MQInstance) => void;
 };
 declare type MathInputState = {
     focused: boolean;

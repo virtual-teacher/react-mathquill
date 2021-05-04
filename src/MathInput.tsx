@@ -22,6 +22,7 @@ type MathInputProps = {
   buttonSets: string[];
   onFocus: () => void;
   onBlur: () => void;
+  onInit?: (input: MQInstance) => void;
 };
 
 type MathInputState = {
@@ -40,7 +41,7 @@ class MathInput extends React.Component<MathInputProps, MathInputState> {
   mathinputRef = React.createRef<HTMLSpanElement>();
 
   componentDidMount(): void {
-    const { value, onChange } = this.props;
+    const { value, onChange, onInit } = this.props;
     window.addEventListener("mousedown", this.handleMouseDown);
     window.addEventListener("mouseup", this.handleMouseUp);
 
@@ -115,6 +116,8 @@ class MathInput extends React.Component<MathInputProps, MathInputState> {
     // Ideally, we would be able to pass an initial value directly into
     // the constructor above
     this.mathField().latex(value);
+
+    onInit && onInit(this.mathField());
 
     initialized = true;
   }

@@ -3,10 +3,15 @@
   "version": "1.0.0",
   "description": "",
   "private": "true",
-  "main": "src/index.ts",
+  "main": "lib/esm/index.js",
+  "module": "lib/esm/index.js",
   "scripts": {
+    "build": "tsc",
     "dev": "webpack serve"
   },
+  "files": [
+    "/lib"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/virtual-teacher/react-mathquill.git"

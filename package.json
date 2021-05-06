@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "private": "true",
-  "main": "lib/esm/index.js",
+  "main": "lib/cjs/index.js",
   "module": "lib/esm/index.js",
   "types": "lib/esm/index.d.ts",
   "scripts": {

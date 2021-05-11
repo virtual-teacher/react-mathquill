@@ -2,7 +2,6 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import MathQuill from "mathquill";
-import TexButtons from "./TexButtons";
 
 type MathFieldOptions = Record<string, unknown>;
 type MQInstance = {
@@ -18,22 +17,13 @@ type MQInstance = {
 type MathInputProps = {
   value: string;
   onChange: (value: string) => void;
-  buttonsVisible?: "always" | "never" | "focused";
-  buttonSets: string[];
-  onFocus: () => void;
-  onBlur: () => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
   onInit?: (input: MQInstance) => void;
+  onSubmit?: (input: MQInstance) => void;
 };
 
-type MathInputState = {
-  focused: boolean;
-};
-
-class MathInput extends React.Component<MathInputProps, MathInputState> {
-  state = {
-    focused: false,
-  };
-
+class MathInput extends React.Component<MathInputProps> {
   mouseDown = false;
 
   labelText = "desktop input";
@@ -42,8 +32,6 @@ class MathInput extends React.Component<MathInputProps, MathInputState> {
 
   componentDidMount(): void {
     const { value, onChange, onInit } = this.props;
-    window.addEventListener("mousedown", this.handleMouseDown);
-    window.addEventListener("mouseup", this.handleMouseUp);
 
     let initialized = false;
 
@@ -100,8 +88,9 @@ class MathInput extends React.Component<MathInputProps, MathInputState> {
           // This handler is called when the user presses the enter
           // key. Since this isn't an actual <input> element, we have
           // to manually trigger the usually automatic form submit.
-          // $(ReactDOM.findDOMNode(this.refs.mathinput)).submit();
-          console.log("should submit if input");
+          if (this.props.onSubmit) {
+            this.props.onSubmit(this.mathField());
+          }
         },
         upOutOf: (mathField: MQInstance) => {
           // This handler is called when the user presses the up
@@ -129,58 +118,16 @@ class MathInput extends React.Component<MathInputProps, MathInputState> {
     }
   }
 
-  componentWillUnmount(): void {
-    window.removeEventListener("mousedown", this.handleMouseDown);
-    window.removeEventListener("mouseup", this.handleMouseUp);
-  }
-
-  // handlers:
-  // keep track of two related bits of state:
-  // * this.state.focused - whether the buttons are currently shown
-  // * this.mouseDown - whether a mouse click is active that started in the
-  //   buttons div
-
   handleFocus = (): void => {
-    this.setState({ focused: true });
-    // TODO(joel) fix properly - we should probably allow onFocus handlers
-    // to this property, but we need to work correctly with them.
-    // if (this.props.onFocus) {
-    //     this.props.onFocus();
-    // }
-  };
-
-  handleMouseDown = (event: MouseEvent): void => {
-    const focused = ReactDOM.findDOMNode(this)?.contains(event.target as Node); // eslint-disable-line
-    this.mouseDown = Boolean(focused);
-
-    if (!focused) {
-      this.setState({ focused: false });
+    if (this.props.onFocus) {
+      this.props.onFocus();
     }
-  };
-
-  handleMouseUp = (): void => {
-    // this mouse click started in the buttons div so we should focus the
-    // input
-    if (this.mouseDown) {
-      this.focus();
-    }
-    this.mouseDown = false;
   };
 
   handleBlur = (): void => {
-    if (!this.mouseDown) {
-      this.setState({ focused: false });
+    if (this.props.onBlur) {
+      this.props.onBlur();
     }
-  };
-
-  focus = (): void => {
-    this.mathField().focus();
-    this.setState({ focused: true });
-  };
-
-  blur = (): void => {
-    this.mathField().blur();
-    this.setState({ focused: false });
   };
 
   mathField = (options?: MathFieldOptions): MQInstance => {
@@ -193,24 +140,7 @@ class MathInput extends React.Component<MathInputProps, MathInputState> {
     // seeing that node for the first time, then returns the associated
     // MathQuill object for that node. It is stable - will always return
     // the same object when called on the same DOM node.
-    return MQ.MathField(
-      ReactDOM.findDOMNode(this.mathinputRef.current),
-      options
-    ); // eslint-disable-line
-  };
-
-  shouldShowButtons = (): boolean => {
-    const { focused } = this.state;
-    const { buttonsVisible } = this.props;
-
-    if (buttonsVisible === "always") {
-      return true;
-    }
-    if (buttonsVisible === "never") {
-      return false;
-    }
-
-    return focused;
+    return MQ.MathField(this.mathinputRef.current, options);
   };
 
   insert = (value: string | ((input: MQInstance) => void)) => {
@@ -227,13 +157,6 @@ class MathInput extends React.Component<MathInputProps, MathInputState> {
 
   render(): React.ReactNode {
     const className = "mq-editable-field mq-math-mode";
-    const { buttonSets } = this.props;
-
-    let buttons = null;
-
-    if (this.shouldShowButtons()) {
-      buttons = <TexButtons sets={buttonSets} onInsert={this.insert} />;
-    }
 
     return (
       <div style={{ display: "inline-block", width: "100%" }}>
@@ -246,7 +169,6 @@ class MathInput extends React.Component<MathInputProps, MathInputState> {
             onBlur={this.handleBlur}
           />
         </div>
-        <div style={{ position: "relative" }}>{buttons}</div>
       </div>
     );
   }

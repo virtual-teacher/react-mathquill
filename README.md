@@ -5,3 +5,9 @@ Dev setup exists only for local development.
 
 
 To create new version run `npm run build` and commit `/lib` directory. After that you need to point to commit in your package.json and run `npm update @virtual-teacher/react-mathquill`.
+
+
+You can use it as a module by specifying tag version:
+```
+"@virtual-teacher/react-mathquill": "https://github.com/virtual-teacher/react-mathquill#v1.0.0"
+```

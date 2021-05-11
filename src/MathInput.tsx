@@ -1,6 +1,4 @@
 import React from "react";
-import ReactDOM from "react-dom";
-
 import MathQuill from "mathquill";
 
 type MathFieldOptions = Record<string, unknown>;
@@ -16,6 +14,7 @@ type MQInstance = {
 
 type MathInputProps = {
   value: string;
+  label?: string;
   onChange: (value: string) => void;
   onFocus?: () => void;
   onBlur?: () => void;
@@ -24,10 +23,6 @@ type MathInputProps = {
 };
 
 class MathInput extends React.Component<MathInputProps> {
-  mouseDown = false;
-
-  labelText = "desktop input";
-
   mathinputRef = React.createRef<HTMLSpanElement>();
 
   componentDidMount(): void {
@@ -164,7 +159,7 @@ class MathInput extends React.Component<MathInputProps> {
           <span
             ref={this.mathinputRef}
             className={className}
-            aria-label={this.labelText}
+            aria-label={this.props?.label}
             onFocus={this.handleFocus}
             onBlur={this.handleBlur}
           />

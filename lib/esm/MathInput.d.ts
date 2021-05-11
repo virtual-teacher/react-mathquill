@@ -11,34 +11,20 @@ declare type MQInstance = {
 };
 declare type MathInputProps = {
     value: string;
+    label?: string;
     onChange: (value: string) => void;
-    buttonsVisible?: "always" | "never" | "focused";
-    buttonSets: string[];
-    onFocus: () => void;
-    onBlur: () => void;
+    onFocus?: () => void;
+    onBlur?: () => void;
     onInit?: (input: MQInstance) => void;
+    onSubmit?: (input: MQInstance) => void;
 };
-declare type MathInputState = {
-    focused: boolean;
-};
-declare class MathInput extends React.Component<MathInputProps, MathInputState> {
-    state: {
-        focused: boolean;
-    };
-    mouseDown: boolean;
-    labelText: string;
+declare class MathInput extends React.Component<MathInputProps> {
     mathinputRef: React.RefObject<HTMLSpanElement>;
     componentDidMount(): void;
     componentDidUpdate(): void;
-    componentWillUnmount(): void;
     handleFocus: () => void;
-    handleMouseDown: (event: MouseEvent) => void;
-    handleMouseUp: () => void;
     handleBlur: () => void;
-    focus: () => void;
-    blur: () => void;
     mathField: (options?: MathFieldOptions | undefined) => MQInstance;
-    shouldShowButtons: () => boolean;
     insert: (value: string | ((input: MQInstance) => void)) => void;
     render(): React.ReactNode;
 }

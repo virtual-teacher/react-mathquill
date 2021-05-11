@@ -6,15 +6,10 @@ import "./mathquill.css";
 const DevContainer = () => {
   const [value, setValue] = useState("");
 
-  return (
-    <ReactMathQuill
-      value={value}
-      onChange={setValue}
-      buttonSets={[]}
-      onFocus={() => null}
-      onBlur={() => null}
-    />
-  );
+  return <ReactMathQuill value={value} onChange={setValue} />;
 };
 
-ReactDOM.render(<DevContainer />, document.body);
+const root = document.createElement("div");
+document.body.append(root);
+
+ReactDOM.render(<DevContainer />, root);

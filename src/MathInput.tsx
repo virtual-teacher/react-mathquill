@@ -10,6 +10,10 @@ type MQInstance = {
   cmd: (cmd: string) => MQInstance;
   focus: () => MQInstance;
   blur: () => MQInstance;
+  __controller: {
+    cursor: Record<string, Record<string, unknown>>;
+    backspace: () => unknown;
+  };
 };
 
 type MathInputProps = {
@@ -35,7 +39,7 @@ class MathInput extends React.Component<MathInputProps> {
       // LaTeX commands that, when typed, are immediately replaced by the
       // appropriate symbol. This does not include ln, log, or any of the
       // trig functions; those are always interpreted as commands.
-      autoCommands: "pi theta phi sqrt nthroot",
+      autoCommands: "pi theta phi sqrt nthroot div cdot",
 
       // Pop the cursor out of super/subscripts on arithmetic operators
       // or (in)equalities.
@@ -70,10 +74,25 @@ class MathInput extends React.Component<MathInputProps> {
           // not-equals sign without pasting unicode or typing TeX
           latex = latex.replace(/<>/g, "\\ne");
 
+          // VT: divide sign directly from keyboard (this effectively removes this sign from editor,
+          // but might be added later on on demand by removing this line)
+          latex = latex.replace(/\:/g, "\\div");
+
           // Use the specified symbol to represent multiplication
           // TODO(alex): Add an option to disallow variables, in
           // which case 'x' should get converted to '\\times'
-          latex = latex.replace(/\\times/g, "\\cdot");
+          latex = latex.replace(/\\cdot/g, "\\times");
+
+          // Preserve cursor position in the common case:
+          // typing '*' to insert a multiplication sign.
+          // We do this by modifying internal MathQuill state
+          // directly, instead of waiting for `.latex()` to be
+          // called in `componentDidUpdate()`.
+          const left = mathField.__controller.cursor[MathQuill.L];
+          if (left && left.ctrlSeq === "\\cdot ") {
+            mathField.__controller.backspace();
+            mathField.cmd("\\times");
+          }
 
           if (initialized && value !== latex) {
             onChange(latex);

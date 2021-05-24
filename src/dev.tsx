@@ -6,6 +6,8 @@ import "./mathquill.css";
 const DevContainer = () => {
   const [value, setValue] = useState("");
 
+  console.log("[DEBUG] value changed", value); // eslint-disable-line
+
   return <ReactMathQuill value={value} onChange={setValue} />;
 };
 

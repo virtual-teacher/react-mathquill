@@ -8,6 +8,10 @@ declare type MQInstance = {
     cmd: (cmd: string) => MQInstance;
     focus: () => MQInstance;
     blur: () => MQInstance;
+    __controller: {
+        cursor: Record<string, Record<string, unknown>>;
+        backspace: () => unknown;
+    };
 };
 declare type MathInputProps = {
     value: string;

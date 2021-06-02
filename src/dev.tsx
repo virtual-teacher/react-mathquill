@@ -8,7 +8,12 @@ const DevContainer = () => {
 
   console.log("[DEBUG] value changed", value); // eslint-disable-line
 
-  return <ReactMathQuill value={value} onChange={setValue} />;
+  return (
+    <div>
+      <ReactMathQuill value={value} onChange={setValue} />
+      <div>{value}</div>
+    </div>
+  );
 };
 
 const root = document.createElement("div");

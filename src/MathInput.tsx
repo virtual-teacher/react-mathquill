@@ -81,20 +81,9 @@ class MathInput extends React.Component<MathInputProps> {
           // Use the specified symbol to represent multiplication
           // TODO(alex): Add an option to disallow variables, in
           // which case 'x' should get converted to '\\times'
-          latex = latex.replace(/\\cdot/g, "\\times");
+          latex = latex.replace(/\\times/g, "\\cdot");
 
-          // Preserve cursor position in the common case:
-          // typing '*' to insert a multiplication sign.
-          // We do this by modifying internal MathQuill state
-          // directly, instead of waiting for `.latex()` to be
-          // called in `componentDidUpdate()`.
-          const left = mathField.__controller.cursor[MathQuill.L];
-          if (left && left.ctrlSeq === "\\cdot ") {
-            mathField.__controller.backspace();
-            mathField.cmd("\\times");
-          }
-
-          if (initialized && value !== latex) {
+          if (initialized) {
             onChange(latex);
           }
         },

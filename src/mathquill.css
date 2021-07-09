@@ -407,6 +407,9 @@
   filter: FlipH;
   -ms-filter: "FlipH";
 }
+.mq-cancel {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0) calc(50% - 1px), black calc(50%), rgba(0, 0, 0, 0) calc(50% + 1px));
+}
 .mq-math-mode .mq-selection,
 .mq-editable-field .mq-selection,
 .mq-math-mode .mq-selection .mq-non-leaf,

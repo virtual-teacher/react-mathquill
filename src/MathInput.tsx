@@ -24,13 +24,14 @@ type MathInputProps = {
   onBlur?: () => void;
   onInit?: (input: MQInstance) => void;
   onSubmit?: (input: MQInstance) => void;
+  replaceOnEdit?: Array<[RegExp, string]>;
 };
 
 class MathInput extends React.Component<MathInputProps> {
   mathinputRef = React.createRef<HTMLSpanElement>();
 
   componentDidMount(): void {
-    const { value, onChange, onInit } = this.props;
+    const { value, onChange, onInit, replaceOnEdit } = this.props;
 
     let initialized = false;
 
@@ -74,11 +75,14 @@ class MathInput extends React.Component<MathInputProps> {
           // not-equals sign without pasting unicode or typing TeX
           latex = latex.replace(/<>/g, "\\ne");
 
-          // VT: our accpeted divide sign is ":", this line replaces default \div command due to inability to control how it is rendered
-          latex = latex.replace(/\\div/g, ":");
+          // VT: we have custom requirements regarding how symbols should be rendered, and that may change in future for different environments
+          if (replaceOnEdit?.length) {
+            for (let index in replaceOnEdit) {
+              const [rule, replace] = replaceOnEdit[index];
 
-          // VT: our accpeted delimiter sign is ",", this line replaces default any "."
-          latex = latex.replace(/\./g, ",");
+              latex = latex.replace(rule, replace);
+            }
+          }
 
           // Use the specified symbol to represent multiplication
           // TODO(alex): Add an option to disallow variables, in

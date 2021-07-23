@@ -4,14 +4,20 @@ import { ReactMathQuill } from "./index";
 import "./mathquill.css";
 
 const DevContainer = () => {
-  const [value, setValue] = useState("3.1415");
+  const [value, setValue] = useState("3.1415\\div5");
 
   console.log("[DEBUG] value changed", value); // eslint-disable-line
 
   return (
     <div>
-      <p>jeżeli formuła wcześniej już miała kropkę</p>
-      <ReactMathQuill value={value} onChange={setValue} />
+      <ReactMathQuill
+        value={value}
+        onChange={setValue}
+        replaceOnEdit={[
+          [/\\div/g, ":"],
+          [/\./g, ","],
+        ]}
+      />
       <div>{value}</div>
     </div>
   );

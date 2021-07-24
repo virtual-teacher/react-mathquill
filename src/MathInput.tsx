@@ -24,13 +24,14 @@ type MathInputProps = {
   onBlur?: () => void;
   onInit?: (input: MQInstance) => void;
   onSubmit?: (input: MQInstance) => void;
+  replaceOnEdit?: Array<[RegExp, string]>;
 };
 
 class MathInput extends React.Component<MathInputProps> {
   mathinputRef = React.createRef<HTMLSpanElement>();
 
   componentDidMount(): void {
-    const { value, onChange, onInit } = this.props;
+    const { value, onChange, onInit, replaceOnEdit } = this.props;
 
     let initialized = false;
 
@@ -39,7 +40,7 @@ class MathInput extends React.Component<MathInputProps> {
       // LaTeX commands that, when typed, are immediately replaced by the
       // appropriate symbol. This does not include ln, log, or any of the
       // trig functions; those are always interpreted as commands.
-      autoCommands: "pi theta phi sqrt nthroot div cdot",
+      autoCommands: "pi theta phi sqrt nthroot cdot",
 
       // Pop the cursor out of super/subscripts on arithmetic operators
       // or (in)equalities.
@@ -74,9 +75,14 @@ class MathInput extends React.Component<MathInputProps> {
           // not-equals sign without pasting unicode or typing TeX
           latex = latex.replace(/<>/g, "\\ne");
 
-          // VT: divide sign directly from keyboard (this effectively removes this sign from editor,
-          // but might be added later on on demand by removing this line)
-          latex = latex.replace(/\:/g, "\\div");
+          // VT: we have custom requirements regarding how symbols should be rendered, and that may change in future for different environments
+          if (replaceOnEdit?.length) {
+            for (let index in replaceOnEdit) {
+              const [rule, replace] = replaceOnEdit[index];
+
+              latex = latex.replace(rule, replace);
+            }
+          }
 
           // Use the specified symbol to represent multiplication
           // TODO(alex): Add an option to disallow variables, in

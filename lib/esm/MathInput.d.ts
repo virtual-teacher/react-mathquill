@@ -21,6 +21,7 @@ declare type MathInputProps = {
     onBlur?: () => void;
     onInit?: (input: MQInstance) => void;
     onSubmit?: (input: MQInstance) => void;
+    replaceOnEdit?: Array<[RegExp, string]>;
 };
 declare class MathInput extends React.Component<MathInputProps> {
     mathinputRef: React.RefObject<HTMLSpanElement>;

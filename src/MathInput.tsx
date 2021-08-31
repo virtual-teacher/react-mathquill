@@ -19,6 +19,7 @@ type MQInstance = {
 type MathInputProps = {
   value: string;
   label?: string;
+  style?: React.CSSProperties;
   onChange: (value: string) => void;
   onFocus?: () => void;
   onBlur?: () => void;
@@ -174,6 +175,7 @@ class MathInput extends React.Component<MathInputProps> {
             ref={this.mathinputRef}
             className={className}
             aria-label={this.props?.label}
+            style={this.props?.style || {}}
             onFocus={this.handleFocus}
             onBlur={this.handleBlur}
           />

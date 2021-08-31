@@ -16,6 +16,7 @@ declare type MQInstance = {
 declare type MathInputProps = {
     value: string;
     label?: string;
+    style?: React.CSSProperties;
     onChange: (value: string) => void;
     onFocus?: () => void;
     onBlur?: () => void;

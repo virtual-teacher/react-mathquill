@@ -1,6 +1,6 @@
 import React from "react";
 declare type MathFieldOptions = Record<string, unknown>;
-declare type MQInstance = {
+export declare type MQInstance = {
     latex: (input?: string) => string;
     typedText: (input: string) => MQInstance;
     keystroke: (input: string) => MQInstance;
@@ -25,6 +25,8 @@ declare type MathInputProps = {
 };
 declare class MathInput extends React.Component<MathInputProps> {
     mathinputRef: React.RefObject<HTMLSpanElement>;
+    constructor(props: MathInputProps);
+    onChange(value: string): void;
     componentDidMount(): void;
     componentDidUpdate(): void;
     handleFocus: () => void;

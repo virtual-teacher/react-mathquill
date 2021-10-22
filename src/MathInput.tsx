@@ -2,7 +2,7 @@ import React from "react";
 import MathQuill from "mathquill";
 
 type MathFieldOptions = Record<string, unknown>;
-type MQInstance = {
+export type MQInstance = {
   latex: (input?: string) => string;
   typedText: (input: string) => MQInstance;
   keystroke: (input: string) => MQInstance;

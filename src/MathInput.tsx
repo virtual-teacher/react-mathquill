@@ -29,9 +29,11 @@ type MathInputProps = {
 
 class MathInput extends React.Component<MathInputProps> {
   mathinputRef = React.createRef<HTMLSpanElement>();
+  onChangeFn: ((value: string) => void) | null = null;
 
   componentDidMount(): void {
     const { value, onChange, onInit, replaceOnEdit } = this.props;
+    this.onChangeFn = onChange;
 
     let initialized = false;
 
@@ -89,8 +91,8 @@ class MathInput extends React.Component<MathInputProps> {
           // which case 'x' should get converted to '\\times'
           latex = latex.replace(/\\times/g, "\\cdot");
 
-          if (initialized) {
-            onChange(latex);
+          if (initialized && this.onChangeFn) {
+            this.onChangeFn(latex);
           }
         },
         enter: () => {
@@ -121,7 +123,8 @@ class MathInput extends React.Component<MathInputProps> {
   }
 
   componentDidUpdate(): void {
-    const { value } = this.props;
+    const { value, onChange } = this.props;
+    this.onChangeFn = onChange;
     if (this.mathField().latex() !== value) {
       this.mathField().latex(value);
     }

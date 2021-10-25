@@ -2,7 +2,7 @@ import React from "react";
 import MathQuill from "mathquill";
 
 type MathFieldOptions = Record<string, unknown>;
-type MQInstance = {
+export type MQInstance = {
   latex: (input?: string) => string;
   typedText: (input: string) => MQInstance;
   keystroke: (input: string) => MQInstance;
@@ -30,8 +30,18 @@ type MathInputProps = {
 class MathInput extends React.Component<MathInputProps> {
   mathinputRef = React.createRef<HTMLSpanElement>();
 
+  constructor(props: MathInputProps) {
+    super(props);
+    this.onChange = this.onChange.bind(this);
+  }
+
+  onChange(value: string) {
+    const { onChange } = this.props;
+    onChange(value);
+  }
+
   componentDidMount(): void {
-    const { value, onChange, onInit, replaceOnEdit } = this.props;
+    const { value, onInit, replaceOnEdit } = this.props;
 
     let initialized = false;
 
@@ -90,7 +100,7 @@ class MathInput extends React.Component<MathInputProps> {
           latex = latex.replace(/\\times/g, "\\cdot");
 
           if (initialized) {
-            onChange(latex);
+            this.onChange(latex);
           }
         },
         enter: () => {

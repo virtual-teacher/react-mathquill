@@ -1,6 +1,6 @@
 {
   "name": "@virtual-teacher/react-mathquill",
-  "version": "1.4.1",
+  "version": "1.4.6",
   "description": "",
   "private": "true",
   "main": "lib/cjs/index.js",

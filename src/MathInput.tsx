@@ -54,7 +54,7 @@ class MathInput extends React.Component<MathInputProps> {
 
       // Pop the cursor out of super/subscripts on arithmetic operators
       // or (in)equalities.
-      charsThatBreakOutOfSupSub: "+-*/=<>≠≤≥",
+      charsThatBreakOutOfSupSub: "=<>≠≤≥",
 
       // Prevent excessive super/subscripts or fractions from being
       // created without operands, e.g. when somebody holds down a key

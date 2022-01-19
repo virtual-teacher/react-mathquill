@@ -9,6 +9,7 @@ You can use it as a module by specifying tag version:
 ```
 
 To create new version:
-- run `npm run build` and commit `/lib` directory,
-- run `npm version <major | minor | patch>`, it will create tag and update `package.json` version,
+- run `npm run build`
+- commit `/lib` directory
+- create new release in GH
 - in app, point to updated tag in your `package.json` and run `npm update @virtual-teacher/react-mathquill`

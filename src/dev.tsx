@@ -6,8 +6,6 @@ import "./mathquill.css";
 const DevContainer = () => {
   const [value, setValue] = useState("3.1415\\div5");
 
-  console.log("[DEBUG] value changed", value); // eslint-disable-line
-
   return (
     <div>
       <ReactMathQuill

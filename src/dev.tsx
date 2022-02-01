@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
+
+import { MQInstance } from "MathInput";
+
 import { ReactMathQuill } from "./index";
 import "./mathquill.css";
 
 const DevContainer = () => {
   const [value, setValue] = useState("3.1415\\div5");
-
-  console.log("[DEBUG] value changed", value); // eslint-disable-line
+  const [mq, setMQ] = useState<MQInstance | null>(null);
 
   return (
     <div>
@@ -17,7 +19,18 @@ const DevContainer = () => {
           [/\\div/g, ":"],
           [/\./g, ","],
         ]}
+        onInit={setMQ}
       />
+      <button
+        onClick={() => {
+          if (mq) {
+            mq.cmd("\\rangle").focus();
+            setValue(mq.latex());
+          }
+        }}
+      >
+        Trigger update
+      </button>
       <div>{value}</div>
     </div>
   );

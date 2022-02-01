@@ -28,7 +28,9 @@ type MathInputProps = {
 };
 
 class MathInput extends React.Component<MathInputProps> {
-  mathinputRef = React.createRef<HTMLSpanElement>();
+  mathInputRef = React.createRef<HTMLSpanElement>();
+  cachedMathField: MQInstance | null = null;
+  initialized: boolean = false;
 
   constructor(props: MathInputProps) {
     super(props);
@@ -41,12 +43,10 @@ class MathInput extends React.Component<MathInputProps> {
   }
 
   componentDidMount(): void {
-    const { value, onInit, replaceOnEdit } = this.props;
-
-    let initialized = false;
+    const { value, onInit } = this.props;
 
     // Initialize MathQuill.MathField instance
-    this.mathField({
+    const mathField = this.mathField({
       // LaTeX commands that, when typed, are immediately replaced by the
       // appropriate symbol. This does not include ln, log, or any of the
       // trig functions; those are always interpreted as commands.
@@ -59,6 +59,8 @@ class MathInput extends React.Component<MathInputProps> {
       // Prevent excessive super/subscripts or fractions from being
       // created without operands, e.g. when somebody holds down a key
       supSubsRequireOperand: true,
+
+      restrictMismatchedBrackets: false,
 
       // The name of this option is somewhat misleading, as tabbing in
       // MathQuill breaks you out of a nested context (fraction/script)
@@ -74,35 +76,6 @@ class MathInput extends React.Component<MathInputProps> {
       spaceBehavesLikeTab: true,
 
       handlers: {
-        edited: (mathField: MQInstance) => {
-          // This handler is guaranteed to be called on change, but
-          // unlike React it sometimes generates false positives.
-          // One of these is on initialization (with an empty string
-          // value), so we have to guard against that below.
-          let latex = mathField.latex();
-
-          // Provide a MathQuill-compatible way to generate the
-          // not-equals sign without pasting unicode or typing TeX
-          latex = latex.replace(/<>/g, "\\ne");
-
-          // VT: we have custom requirements regarding how symbols should be rendered, and that may change in future for different environments
-          if (replaceOnEdit?.length) {
-            for (let index in replaceOnEdit) {
-              const [rule, replace] = replaceOnEdit[index];
-
-              latex = latex.replace(rule, replace);
-            }
-          }
-
-          // Use the specified symbol to represent multiplication
-          // TODO(alex): Add an option to disallow variables, in
-          // which case 'x' should get converted to '\\times'
-          latex = latex.replace(/\\times/g, "\\cdot");
-
-          if (initialized) {
-            this.onChange(latex);
-          }
-        },
         enter: () => {
           // This handler is called when the user presses the enter
           // key. Since this isn't an actual <input> element, we have
@@ -123,11 +96,13 @@ class MathInput extends React.Component<MathInputProps> {
 
     // Ideally, we would be able to pass an initial value directly into
     // the constructor above
-    this.mathField().latex(value);
+    mathField.latex(value);
 
-    onInit && onInit(this.mathField());
-
-    initialized = true;
+    onInit && onInit(mathField);
+    // we are using event instead of `edited()` event
+    // as edited() does not triggers on e.g. bracket changes
+    this.mathInputRef.current?.addEventListener("keydown", this.handleEdit);
+    this.initialized = true;
   }
 
   componentDidUpdate(): void {
@@ -136,6 +111,43 @@ class MathInput extends React.Component<MathInputProps> {
       this.mathField().latex(value);
     }
   }
+
+  componentWillUnmount(): void {
+    this.mathInputRef.current?.removeEventListener("keydown", this.handleEdit);
+  }
+
+  handleEdit = (): void => {
+    setTimeout(() => {
+      const { replaceOnEdit } = this.props;
+      // This handler is guaranteed to be called on change, but
+      // unlike React it sometimes generates false positives.
+      // One of these is on initialization (with an empty string
+      // value), so we have to guard against that below.
+      let latex = this.mathField().latex();
+
+      // Provide a MathQuill-compatible way to generate the
+      // not-equals sign without pasting unicode or typing TeX
+      latex = latex.replace(/<>/g, "\\ne");
+
+      // VT: we have custom requirements regarding how symbols should be rendered, and that may change in future for different environments
+      if (replaceOnEdit?.length) {
+        for (let index in replaceOnEdit) {
+          const [rule, replace] = replaceOnEdit[index];
+
+          latex = latex.replace(rule, replace);
+        }
+      }
+
+      // Use the specified symbol to represent multiplication
+      // TODO(alex): Add an option to disallow variables, in
+      // which case 'x' should get converted to '\\times'
+      latex = latex.replace(/\\times/g, "\\cdot");
+
+      if (this.initialized) {
+        this.onChange(latex);
+      }
+    });
+  };
 
   handleFocus = (): void => {
     if (this.props.onFocus) {
@@ -150,6 +162,9 @@ class MathInput extends React.Component<MathInputProps> {
   };
 
   mathField = (options?: MathFieldOptions): MQInstance => {
+    if (!options && this.cachedMathField) {
+      return this.cachedMathField;
+    }
     // The MathQuill API is now "versioned" through its own "InterVer"
     // system.
     // See: https://github.com/mathquill/mathquill/pull/459
@@ -159,7 +174,8 @@ class MathInput extends React.Component<MathInputProps> {
     // seeing that node for the first time, then returns the associated
     // MathQuill object for that node. It is stable - will always return
     // the same object when called on the same DOM node.
-    return MQ.MathField(this.mathinputRef.current, options);
+    this.cachedMathField = MQ.MathField(this.mathInputRef.current, options);
+    return this.cachedMathField!;
   };
 
   insert = (value: string | ((input: MQInstance) => void)) => {
@@ -181,7 +197,7 @@ class MathInput extends React.Component<MathInputProps> {
       <div style={{ display: "inline-block", width: "100%" }}>
         <div style={{ display: "inline-block", width: "100%" }}>
           <span
-            ref={this.mathinputRef}
+            ref={this.mathInputRef}
             className={className}
             aria-label={this.props?.label}
             onFocus={this.handleFocus}

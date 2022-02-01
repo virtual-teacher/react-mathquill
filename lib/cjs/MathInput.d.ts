@@ -24,11 +24,15 @@ declare type MathInputProps = {
     replaceOnEdit?: Array<[RegExp, string]>;
 };
 declare class MathInput extends React.Component<MathInputProps> {
-    mathinputRef: React.RefObject<HTMLSpanElement>;
+    mathInputRef: React.RefObject<HTMLSpanElement>;
+    cachedMathField: MQInstance | null;
+    initialized: boolean;
     constructor(props: MathInputProps);
     onChange(value: string): void;
     componentDidMount(): void;
     componentDidUpdate(): void;
+    componentWillUnmount(): void;
+    handleEdit: () => void;
     handleFocus: () => void;
     handleBlur: () => void;
     mathField: (options?: MathFieldOptions | undefined) => MQInstance;

@@ -76,6 +76,7 @@ class MathInput extends React.Component<MathInputProps> {
       spaceBehavesLikeTab: true,
 
       handlers: {
+        edit: this.handleEdit,
         enter: () => {
           // This handler is called when the user presses the enter
           // key. Since this isn't an actual <input> element, we have
@@ -99,9 +100,6 @@ class MathInput extends React.Component<MathInputProps> {
     mathField.latex(value);
 
     onInit && onInit(mathField);
-    // we are using event instead of `edited()` event
-    // as edited() does not triggers on e.g. bracket changes
-    this.mathInputRef.current?.addEventListener("keydown", this.handleEdit);
     this.initialized = true;
   }
 
@@ -112,41 +110,35 @@ class MathInput extends React.Component<MathInputProps> {
     }
   }
 
-  componentWillUnmount(): void {
-    this.mathInputRef.current?.removeEventListener("keydown", this.handleEdit);
-  }
+  handleEdit = (mathField: MQInstance): void => {
+    const { replaceOnEdit } = this.props;
+    // This handler is guaranteed to be called on change, but
+    // unlike React it sometimes generates false positives.
+    // One of these is on initialization (with an empty string
+    // value), so we have to guard against that below.
+    let latex = mathField.latex();
 
-  handleEdit = (): void => {
-    setTimeout(() => {
-      const { replaceOnEdit } = this.props;
-      // This handler is guaranteed to be called on change, but
-      // unlike React it sometimes generates false positives.
-      // One of these is on initialization (with an empty string
-      // value), so we have to guard against that below.
-      let latex = this.mathField().latex();
+    // Provide a MathQuill-compatible way to generate the
+    // not-equals sign without pasting unicode or typing TeX
+    latex = latex.replace(/<>/g, "\\ne");
 
-      // Provide a MathQuill-compatible way to generate the
-      // not-equals sign without pasting unicode or typing TeX
-      latex = latex.replace(/<>/g, "\\ne");
+    // VT: we have custom requirements regarding how symbols should be rendered, and that may change in future for different environments
+    if (replaceOnEdit?.length) {
+      for (let index in replaceOnEdit) {
+        const [rule, replace] = replaceOnEdit[index];
 
-      // VT: we have custom requirements regarding how symbols should be rendered, and that may change in future for different environments
-      if (replaceOnEdit?.length) {
-        for (let index in replaceOnEdit) {
-          const [rule, replace] = replaceOnEdit[index];
-
-          latex = latex.replace(rule, replace);
-        }
+        latex = latex.replace(rule, replace);
       }
+    }
 
-      // Use the specified symbol to represent multiplication
-      // TODO(alex): Add an option to disallow variables, in
-      // which case 'x' should get converted to '\\times'
-      latex = latex.replace(/\\times/g, "\\cdot");
+    // Use the specified symbol to represent multiplication
+    // TODO(alex): Add an option to disallow variables, in
+    // which case 'x' should get converted to '\\times'
+    latex = latex.replace(/\\times/g, "\\cdot");
 
-      if (this.initialized) {
-        this.onChange(latex);
-      }
-    });
+    if (this.initialized) {
+      this.onChange(latex);
+    }
   };
 
   handleFocus = (): void => {

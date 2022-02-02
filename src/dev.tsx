@@ -13,7 +13,6 @@ const DevContainer = () => {
   const updateFormula = useCallback((cmd: string) => {
     if (mq) {
       mq.cmd(cmd).focus();
-      setValue(mq.latex());
     }
   }, [mq]);
 

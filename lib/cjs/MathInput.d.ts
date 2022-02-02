@@ -31,8 +31,7 @@ declare class MathInput extends React.Component<MathInputProps> {
     onChange(value: string): void;
     componentDidMount(): void;
     componentDidUpdate(): void;
-    componentWillUnmount(): void;
-    handleEdit: () => void;
+    handleEdit: (mathField: MQInstance) => void;
     handleFocus: () => void;
     handleBlur: () => void;
     mathField: (options?: MathFieldOptions | undefined) => MQInstance;
